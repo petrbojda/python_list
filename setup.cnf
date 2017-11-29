@@ -1,0 +1,7 @@
+# Configuration file to set appropriate paths to data and modules.
+# Created as a part of the project at the Czech Technical University
+# by Petr Bojda, 11-29-2017.
+
+[Datasets]
+data_01: dets01.csv
+
