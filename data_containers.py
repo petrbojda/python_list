@@ -88,8 +88,23 @@ class DetectionList(list):
                                                self._theta_minmax[0] <= elem._theta <= self._theta_minmax[1] and
                                                self._rvel_minmax[0] <= elem._rvel <= self._rvel_minmax[1])]
 
+    def get_array_mcc(self):
+        return [elem._mcc for elem in self]
+
     def get_array_x(self):
         return [elem._x for elem in self]
+
+    def get_array_y(self):
+        return [elem._y for elem in self]
+
+    def get_array_rvel(self):
+        return [elem._rvel for elem in self]
+
+    def get_array_rho(self):
+        return [elem._rho for elem in self]
+
+    def get_array_theta(self):
+        return [elem._theta for elem in self]
 
     def append_detection(self, detection_point):
         self.append(detection_point)
@@ -107,12 +122,9 @@ class DetectionList(list):
         with open (filename,newline='') as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
-                print("dc: Appending data from a csv file: mcc",row['mcc'],"x",row['x'],"y",row['y'],"vel",row['vel'])
                 self.append_detection(DetectionPoint(mcc=int(row['mcc'])))
                 self[-1].complete_rhotheta_by_XYvel(x=float(row['x']),y=float(row['y']),rvel=float(row['vel']))
                 self.recalculate_minmax()
-                print("dc: Appended:", self[-1]._x,self[-1]._y,self[-1]._rvel,self[-1]._rho,self[-1]._theta)
-                print ("dc: Current array of x:",self.get_array_x())
         data = None
         return data
 
