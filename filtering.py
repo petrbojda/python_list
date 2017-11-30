@@ -24,8 +24,9 @@ def main(config_data):
         print(lst_det.get_array_mcc())
         print(lst_det.get_array_x())
         print(lst_det.get_array_y())
+        print(lst_det.get_array_theta_deg())
 
-    # Filter the list by the "selection" structure
+    # The first filtration: Filter the list by the "selection" structure
     selection = {"mcc_tp": None, "x_tp": None, "y_tp": None,
                  "rho_tp": None, "rvel_tp": [0.6, 5], "theta_tp": [40 * np.pi / 180, 58 * np.pi / 180]}
     # Structure 'selection' constrains  data to use as input to the tracker.
@@ -36,6 +37,7 @@ def main(config_data):
 
     if lst_det:
         lst_det.modify_iteration(selection)
+        print(90*"=")
         print("filtering: Selection to apply:", selection)
         print("filtering: mcc:", lst_det._mcc_minmax)
         print("filtering: MCCs start at: ", lst_det.get_min_mcc(),
@@ -43,6 +45,28 @@ def main(config_data):
         print(lst_det.get_array_mcc())
         print(lst_det.get_array_x())
         print(lst_det.get_array_y())
+        print(lst_det.get_array_theta_deg())
+
+    # The second filtration: Filter the list by the "selection" structure
+    selection = {"mcc_tp": None, "x_tp": None, "y_tp": None,
+                 "rho_tp": None, "rvel_tp": None, "theta_tp": None}
+    # Structure 'selection' constrains  data to use as input to the tracker.
+    # An exact value or interval of 'mcc', 'azimuth', 'range' ... etc can be
+    # specified here to block unwanted data to enter.
+    # Programmer point of view: the structure "selection" is used to modify
+    # the __next__() method in a DetectionList class.
+
+    if lst_det:
+        lst_det.modify_iteration(selection)
+        print(90 * "=")
+        print("filtering: Selection to apply:", selection)
+        print("filtering: mcc:", lst_det._mcc_minmax)
+        print("filtering: MCCs start at: ", lst_det.get_min_mcc(),
+              "and end at: ", lst_det.get_max_mcc())
+        print(lst_det.get_array_mcc())
+        print(lst_det.get_array_x())
+        print(lst_det.get_array_y())
+        print(lst_det.get_array_theta_deg())
 
 
 if __name__ == "__main__":

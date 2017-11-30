@@ -56,6 +56,13 @@ class DetectionList(list):
         self._rho_minmax = (0, 0)
         self._mcc_minmax = (0, 0)
 
+        self._y_minmax_iter = (0, 0)
+        self._x_minmax_iter = (0, 0)
+        self._theta_minmax_iter = (0, 0)
+        self._rvel_minmax_iter = (0, 0)
+        self._rho_minmax_iter = (0, 0)
+        self._mcc_minmax_iter = (0, 0)
+
         self._count = 0
         self._sel = self
 
@@ -74,19 +81,20 @@ class DetectionList(list):
             raise StopIteration
 
     def modify_iteration(self,selection):
-        self._mcc_minmax = selection['mcc_tp'] if selection['mcc_tp'] else self._mcc_minmax
-        self._x_minmax = selection['x_tp'] if selection['x_tp'] else self._x_minmax
-        self._y_minmax = selection['y_tp'] if selection['y_tp'] else self._y_minmax
-        self._rho_minmax = selection['rho_tp'] if selection['rho_tp'] else self._rho_minmax
-        self._theta_minmax = selection['theta_tp'] if selection['theta_tp'] else self._theta_minmax
-        self._rvel_minmax = selection['rvel_tp'] if selection['rvel_tp'] else self._rvel_minmax
+        # TODO: Restart minmax constrains when this function is being called repeatedly
+        self._mcc_minmax_iter = selection['mcc_tp'] if selection['mcc_tp'] else self._mcc_minmax
+        self._x_minmax_iter = selection['x_tp'] if selection['x_tp'] else self._x_minmax
+        self._y_minmax_iter = selection['y_tp'] if selection['y_tp'] else self._y_minmax
+        self._rho_minmax_iter = selection['rho_tp'] if selection['rho_tp'] else self._rho_minmax
+        self._theta_minmax_iter = selection['theta_tp'] if selection['theta_tp'] else self._theta_minmax
+        self._rvel_minmax_iter = selection['rvel_tp'] if selection['rvel_tp'] else self._rvel_minmax
 
-        self._sel = [elem for elem in self if (self._mcc_minmax[0] <= elem._mcc <= self._mcc_minmax[1] and
-                                               self._x_minmax[0] <= elem._x <= self._x_minmax[1] and
+        self._sel = [elem for elem in self if (self._mcc_minmax_iter[0] <= elem._mcc <= self._mcc_minmax_iter[1] and
+                                               self._x_minmax_iter[0] <= elem._x <= self._x_minmax_iter[1] and
                                                self._y_minmax[0] <= elem._y <= self._y_minmax[1] and
-                                               self._rho_minmax[0] <= elem._rho <= self._rho_minmax[1] and
-                                               self._theta_minmax[0] <= elem._theta <= self._theta_minmax[1] and
-                                               self._rvel_minmax[0] <= elem._rvel <= self._rvel_minmax[1])]
+                                               self._rho_minmax_iter[0] <= elem._rho <= self._rho_minmax_iter[1] and
+                                               self._theta_minmax_iter[0] <= elem._theta <= self._theta_minmax_iter[1] and
+                                               self._rvel_minmax_iter[0] <= elem._rvel <= self._rvel_minmax_iter[1])]
 
     def get_array_mcc(self):
         return [elem._mcc for elem in self]
@@ -105,6 +113,9 @@ class DetectionList(list):
 
     def get_array_theta(self):
         return [elem._theta for elem in self]
+
+    def get_array_theta_deg(self):
+        return [elem._theta*180/np.pi for elem in self]
 
     def append_detection(self, detection_point):
         self.append(detection_point)
