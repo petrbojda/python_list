@@ -1,12 +1,10 @@
 #!/usr/bin/env python
 
 import data_containers as dc
-
 import numpy as np
 
 
 def main(config_data):
-
 
     # Load Data from .csv file
     if config_data["datafile"]:
@@ -21,10 +19,14 @@ def main(config_data):
         print("filtering: No filtering applied yet.")
         print("filtering: MCCs start at: ", lst_det.get_min_mcc(),
                   "and end at: ", lst_det.get_max_mcc())
-        print(lst_det.get_array_mcc())
-        print(lst_det.get_array_x())
-        print(lst_det.get_array_y())
-        print(lst_det.get_array_theta_deg())
+        print("mcc",lst_det.get_array_mcc())
+        print("x",lst_det.get_array_x())
+        print("y",lst_det.get_array_y())
+        print("rho",lst_det.get_array_rho())
+        print("theta",lst_det.get_array_theta_deg())
+        print("rvel",lst_det.get_array_rvel())
+    else:
+        print("filtering: lst_det is empty.")
 
     # The first filtration: Filter the list by the "selection" structure
     selection = {"mcc_tp": None, "x_tp": None, "y_tp": None,
@@ -34,18 +36,22 @@ def main(config_data):
     # specified here to block unwanted data to enter.
     # Programmer point of view: the structure "selection" is used to modify
     # the __next__() method in a DetectionList class.
-
+    print(90 * "=")
+    print("filtering: 2nd, Selection to apply:", selection)
     if lst_det:
         lst_det.modify_iteration(selection)
-        print(90*"=")
-        print("filtering: Selection to apply:", selection)
+
         print("filtering: mcc:", lst_det._mcc_minmax)
         print("filtering: MCCs start at: ", lst_det.get_min_mcc(),
               "and end at: ", lst_det.get_max_mcc())
-        print(lst_det.get_array_mcc())
-        print(lst_det.get_array_x())
-        print(lst_det.get_array_y())
-        print(lst_det.get_array_theta_deg())
+        print("mcc", lst_det.get_array_mcc())
+        print("x", lst_det.get_array_x())
+        print("y", lst_det.get_array_y())
+        print("rho", lst_det.get_array_rho())
+        print("theta", lst_det.get_array_theta_deg())
+        print("rvel", lst_det.get_array_rvel())
+    else:
+        print("filtering: lst_det is empty.")
 
     # The second filtration: Filter the list by the "selection" structure
     selection = {"mcc_tp": None, "x_tp": None, "y_tp": None,
@@ -55,18 +61,23 @@ def main(config_data):
     # specified here to block unwanted data to enter.
     # Programmer point of view: the structure "selection" is used to modify
     # the __next__() method in a DetectionList class.
+    print(90 * "=")
+    print("filtering: 3th, Selection to apply:", selection)
 
     if lst_det:
         lst_det.modify_iteration(selection)
-        print(90 * "=")
-        print("filtering: Selection to apply:", selection)
+
         print("filtering: mcc:", lst_det._mcc_minmax)
         print("filtering: MCCs start at: ", lst_det.get_min_mcc(),
               "and end at: ", lst_det.get_max_mcc())
-        print(lst_det.get_array_mcc())
-        print(lst_det.get_array_x())
-        print(lst_det.get_array_y())
-        print(lst_det.get_array_theta_deg())
+        print("mcc", lst_det.get_array_mcc())
+        print("x", lst_det.get_array_x())
+        print("y", lst_det.get_array_y())
+        print("rho", lst_det.get_array_rho())
+        print("theta", lst_det.get_array_theta_deg())
+        print("rvel", lst_det.get_array_rvel())
+    else:
+        print("filtering: lst_det is empty.")
 
 
 if __name__ == "__main__":

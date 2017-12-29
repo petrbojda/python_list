@@ -17,12 +17,14 @@ class DetectionPoint(object):
         self._rho = raz
         self._theta = rrng
 
-    def complete_rhotheta_by_XYvel (self,x,y,rvel):
+    def assign_XYvel (self,x,y,rvel):
         self._rvel = rvel
         self._x = x
         self._y = y
-        self._theta = np.arctan(y/x)
-        self._rho = np.linalg.norm([x,y])
+
+    def complete_rhotheta_from_cartesian (self):
+        self._theta = np.arctan(self._y/self._x)
+        self._rho = np.linalg.norm([self._x,self._y])
 
     def get_mcc(self):
         return self._mcc
@@ -64,19 +66,33 @@ class DetectionList(list):
         self._mcc_minmax_iter = (0, 0)
 
         self._count = 0
-        self._sel = self
+        # self._sel = self.copy()
+        #
+        # print("dc.__init__: identity of lists self and self._sel:", self is self._sel)
+        # print("dc.__init__: equality of lists self and self._sel:", self == self._sel)
+        # print("dc.__init__: type of self:", type(self), "length:", len(self))
+        # print("dc.__init__: type of self._sel:", type(self._sel), "length:", len(self._sel))
 
     def __iter__(self):
         self._count = 0
         return self
 
     def __next__(self):
-        if self._sel:
-            if self._count > len(self._sel)-1:
+        if self:
+            if self._count > len(self)-1:
                 raise StopIteration
             else:
                 self._count += 1
-                return self._sel[self._count-1]
+                if  (self._mcc_minmax_iter[0] <= self[self._count-1]._mcc <= self._mcc_minmax_iter[1] and
+                     self._x_minmax_iter[0] <= self[self._count-1]._x <= self._x_minmax_iter[1] and
+                     self._y_minmax[0] <= self[self._count-1]._y <= self._y_minmax[1] and
+                     self._rho_minmax_iter[0] <= self[self._count-1]._rho <= self._rho_minmax_iter[1] and
+                     self._theta_minmax_iter[0] <= self[self._count-1]._theta <= self._theta_minmax_iter[1] and
+                     self._rvel_minmax_iter[0] <= self[self._count-1]._rvel <= self._rvel_minmax_iter[1]):
+                    return self[self._count-1]
+                # TODO: Constrains must be set properly before it starts iterating
+                else:
+                    pass
         else:
             raise StopIteration
 
@@ -89,12 +105,33 @@ class DetectionList(list):
         self._theta_minmax_iter = selection['theta_tp'] if selection['theta_tp'] else self._theta_minmax
         self._rvel_minmax_iter = selection['rvel_tp'] if selection['rvel_tp'] else self._rvel_minmax
 
-        self._sel = [elem for elem in self if (self._mcc_minmax_iter[0] <= elem._mcc <= self._mcc_minmax_iter[1] and
-                                               self._x_minmax_iter[0] <= elem._x <= self._x_minmax_iter[1] and
-                                               self._y_minmax[0] <= elem._y <= self._y_minmax[1] and
-                                               self._rho_minmax_iter[0] <= elem._rho <= self._rho_minmax_iter[1] and
-                                               self._theta_minmax_iter[0] <= elem._theta <= self._theta_minmax_iter[1] and
-                                               self._rvel_minmax_iter[0] <= elem._rvel <= self._rvel_minmax_iter[1])]
+        print("dc: modify_iteration called, minmax constrains: ")
+        print("dc: mcc", self._mcc_minmax)
+        print("dc: x", self._x_minmax)
+        print("dc: y", self._y_minmax)
+        print("dc: rho", self._rho_minmax)
+        print("dc: theta", self._theta_minmax)
+        print("dc: rvel", self._rvel_minmax)
+
+        print("dc: modify_iteration called, minmax ITER constrains: ")
+        print("dc: mcc", self._mcc_minmax_iter)
+        print("dc: x", self._x_minmax_iter)
+        print("dc: y", self._y_minmax_iter)
+        print("dc: rho", self._rho_minmax_iter)
+        print("dc: theta", self._theta_minmax_iter)
+        print("dc: rvel", self._rvel_minmax_iter)
+
+       # selected_list = [elem for elem in self if (self._mcc_minmax_iter[0] <= elem._mcc <= self._mcc_minmax_iter[1] and
+       #                                         self._x_minmax_iter[0] <= elem._x <= self._x_minmax_iter[1] and
+       #                                         self._y_minmax[0] <= elem._y <= self._y_minmax[1] and
+       #                                         self._rho_minmax_iter[0] <= elem._rho <= self._rho_minmax_iter[1] and
+       #                                         self._theta_minmax_iter[0] <= elem._theta <= self._theta_minmax_iter[1] and
+       #                                         self._rvel_minmax_iter[0] <= elem._rvel <= self._rvel_minmax_iter[1])]
+
+        # print("dc.modify_iteration: identity of lists self and self._sel:", self is self._sel)
+        # print("dc.modify_iteration: equality of lists self and self._sel:", self == self._sel)
+        # print("dc.modify_iteration: type of self:", type(self), "length:",len(self))
+        # print("dc.modify_iteration: type of self._sel:", type(self._sel), "length:",len(self._sel))
 
     def get_array_mcc(self):
         return [elem._mcc for elem in self]
@@ -127,17 +164,34 @@ class DetectionList(list):
         self._rvel_minmax = (min([elem._rvel for elem in self]), max([elem._rvel for elem in self]))
         self._rho_minmax = (min([elem._rho for elem in self]), max([elem._rho for elem in self]))
         self._mcc_minmax = (min([elem._mcc for elem in self]), max([elem._mcc for elem in self]))
+        print("dc: recalculate_minmax called, minmax constrains: ")
+        print("dc: mcc", self._mcc_minmax)
+        print("dc: x", self._x_minmax)
+        print("dc: y", self._y_minmax)
+        print("dc: rho", self._rho_minmax)
+        print("dc: theta", self._theta_minmax)
+        print("dc: rvel", self._rvel_minmax)
+
+        print("dc: recalculate_minmax called, minmax ITER constrains: ")
+        print("dc: mcc", self._mcc_minmax_iter)
+        print("dc: x", self._x_minmax_iter)
+        print("dc: y", self._y_minmax_iter)
+        print("dc: rho", self._rho_minmax_iter)
+        print("dc: theta", self._theta_minmax_iter)
+        print("dc: rvel", self._rvel_minmax_iter)
 
 
     def append_data_from_csv(self,filename):
-        with open (filename,newline='') as csvfile:
+        with open(filename,newline='') as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
                 self.append_detection(DetectionPoint(mcc=int(row['mcc'])))
-                self[-1].complete_rhotheta_by_XYvel(x=float(row['x']),y=float(row['y']),rvel=float(row['vel']))
-                self.recalculate_minmax()
-        data = None
-        return data
+                self[-1].assign_XYvel(x=float(row['x']), y=float(row['y']), rvel=float(row['vel']))
+                self[-1].complete_rhotheta_from_cartesian()
+                print("dc.append_data_from_csv: length of the list:",len(self))
+                print("dc.append_data_from_csv: last assigned detection:", self[-1]._x,self[-1]._y)
+        print("dc.append_data_from_csv, mcc:", [elem._mcc for elem in self])
+        self.recalculate_minmax()
 
     def get_min_mcc(self):
         return self._mcc_minmax[0]
