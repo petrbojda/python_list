@@ -15,6 +15,7 @@ def main(config_data):
 
         print("filtering: MCCs start at: ", lst_det.get_min_mcc(),
               "and end at: ", lst_det.get_max_mcc())
+        print("filtering: The lst_det keys:",lst_det[0].keys())
 
         print("filtering: No filtering applied yet.")
         print("filtering: MCCs start at: ", lst_det.get_min_mcc(),
