@@ -196,9 +196,6 @@ class DetectionList(list):
         self._rvel_minmax_iter[0] = detection._rvel
         self._rvel_minmax_iter[1] = detection._rvel
 
-
-
-
     def get_min_mcc(self):
         return self._mcc_minmax[0]
 
